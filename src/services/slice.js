@@ -8,6 +8,7 @@ const initialState = {
     theme: 'light',
     previewParent: '',
     wishList:[],
+    modalOpen:false,
 }
 
 export const counterSlice = createSlice({
@@ -70,9 +71,12 @@ export const counterSlice = createSlice({
         sortWishList: (state, { payload }) => {
             state.wishList = payload
         },
+        setModalOpen:(state, {payload})=>{
+            state.modalOpen=payload
+        }
     },
 })
 
-export const { setSorting, setSelectedCategory, setProductsList, addCart, removeCart, sortCart, changeTheme, setPreviewParent, changeCartCount, addWishList, removeWishList, sortWishList } = counterSlice.actions
+export const { setSorting, setSelectedCategory, setProductsList, addCart, removeCart, sortCart, changeTheme, setPreviewParent, changeCartCount, addWishList, removeWishList, sortWishList, setModalOpen } = counterSlice.actions
 
 export default counterSlice.reducer 

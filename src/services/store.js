@@ -8,7 +8,7 @@ import { Tuple } from '@reduxjs/toolkit';
 const persistConfig = {
     key: 'root',
     storage,
-    whitelist: ['selectedCategory', 'sorting', 'cartList', 'theme', 'previewParent', 'wishList'],
+    whitelist: ['selectedCategory', 'sorting', 'cartList', 'theme', 'previewParent', 'wishList', 'modalOpen'],
 }
 
 const persistedReducer = persistReducer(persistConfig, product)

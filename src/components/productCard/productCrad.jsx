@@ -16,18 +16,19 @@ import { useDispatch, useSelector } from 'react-redux';
 import CloseIcon from '@mui/icons-material/Close';
 import { setPreviewParent } from '../../services/slice';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 function ProductCard({ product, pageType }) {
     const [rating, setRating] = useState(product.rating.rate)
     const dispatch = useDispatch()
     const wishList = useSelector(state => state.product.wishList)
-    const isWart = wishList.some(obj => {
+    const isWished = wishList.some(obj => {
         return obj.id === product.id
     })
-    const history=useHistory()
+    const history = useHistory()
 
     function handleAddCart() {
-        const newProduct={...product};
+        const newProduct = { ...product };
         dispatch(addWishList(newProduct))
     }
 
@@ -35,7 +36,7 @@ function ProductCard({ product, pageType }) {
         <>
             <Card sx={{ borderRadius: '50px', p: '10px', height: '100%', position: 'relative', textAlign: 'center', boxFlexGroup: 'rgba(255, 255, 255, 0.1)', bgcolor: 'white' }}>
                 <CardHeader
-                    sx={{pb:'0px'}}
+                    sx={{ pb: '0px' }}
                     avatar={
                         <IconButton>
                             <Link to={`/preview/${product.id}`}>
@@ -46,10 +47,14 @@ function ProductCard({ product, pageType }) {
                         </IconButton>
                     }
                     action={pageType === 'shop' ?
-                        <IconButton className='addCartIcon' onClick={() => { handleAddCart() }} sx={{ opacity: `${isWart && 0.1}`, pointerEvents: `${isWart && 'none'}` }} >
-                            <div className='headerIcon'>
-                                <FavoriteIcon />
-                            </div>
+                        <IconButton className='addCartIcon' onClick={() => { isWished ? dispatch(removeWishList(product.id)) : handleAddCart() }} >
+                            <Box className='headerIcon' sx={{ borderColor: 'transparent' }}>
+                                {isWished ?
+                                    <FavoriteIcon sx={{ color: 'red' }} />
+                                    :
+                                    <FavoriteBorderIcon/>
+                                }
+                            </Box>
                         </IconButton>
                         :
                         <IconButton className='addCartIcon' onClick={() => { dispatch(removeWishList(product.id)) }}>
@@ -67,14 +72,14 @@ function ProductCard({ product, pageType }) {
                         height="150"
                         image={product.image}
                         alt="Paella dish"
-                        sx={{ objectFit: 'contain', zIndex: 1, position: 'absolute', cursor:'pointer' }}
+                        sx={{ objectFit: 'contain', zIndex: 1, position: 'absolute', cursor: 'pointer' }}
                         className='shopcardImage'
-                        onClick={()=>{history.push(`/preview/${product.id}`)}}
+                        onClick={() => { history.push(`/preview/${product.id}`) }}
                     />
                 </div>
                 <Box sx={{ height: '150px' }}></Box>
                 <Rating name="half-rating-read" defaultValue={rating} precision={0.5} readOnly size='small' sx={{ paddingTop: '16px' }} />
-                <CardContent sx={{ pt: 0, pb:'5px !important' }}>
+                <CardContent sx={{ pt: 0, pb: '5px !important' }}>
                     <Typography variant="h6" color="black" textAlign={'center'}>
                         <p className='productTitle'>{product.title}</p>
                         <p className='productPrice'>₹{product.price}</p>

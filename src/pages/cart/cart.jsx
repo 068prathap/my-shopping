@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
 import { useDispatch, useSelector } from 'react-redux';
 import Loader from '../../components/loader/loader';
-import { setSorting, sortCart, removeCart, changeCartCount } from '../../services/slice';
+import { setSorting, sortCart, removeCart, changeCartCount, setModalOpen } from '../../services/slice';
 import Rating from '@mui/material/Rating';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
@@ -14,6 +14,8 @@ import { IconButton } from '@mui/material';
 import LocalMallIcon from '@mui/icons-material/LocalMall';
 import { Box } from '@mui/material';
 import CheckCircleOutlineSharpIcon from '@mui/icons-material/CheckCircleOutlineSharp';
+import BuyModal from '../buyModal/buyModal';
+import { useHistory } from 'react-router-dom';
 
 function Cart() {
     const cartList = useSelector(state => state.product.cartList)
@@ -24,6 +26,8 @@ function Cart() {
     const count = cartList.length
     const [totalAmount, setTotalAmount] = useState(0)
     const theme = useSelector(state => state.product.theme)
+    // const [isOpenModal, setIsOpenModal]=useState(false)
+    const history = useHistory()
 
     useEffect(() => {
         const totalAmount = cartList.reduce((acc, curr) => {
@@ -63,7 +67,7 @@ function Cart() {
                             <Box className='shopHeaderResult' sx={{ display: 'flex', justifyContent: 'right' }}>
                                 {count ?
                                     <>
-                                        <Box className='backButton'>
+                                        <Box className='backButton' onClick={()=>{dispatch(setModalOpen(true))}}>
                                             <p className='productText cartBuyText'>Buy now</p>
                                             <LocalMallIcon />
                                         </Box>
@@ -112,9 +116,9 @@ function Cart() {
                                                                     <p className='cartQtyCount'>
                                                                         Quantity:
                                                                         <input className='qtyInput' type="text" value={product.count} onChange={(e) => { dispatch(changeCartCount({ id: product.id, value: +e.target.value })) }} />
-                                                                        <Box sx={{display:'flex'}}>
+                                                                        {/* <Box sx={{display:'flex'}}>
                                                                             <CheckCircleOutlineSharpIcon />
-                                                                        </Box>
+                                                                        </Box> */}
                                                                     </p>
                                                                     <IconButton color='inherit' onClick={() => { dispatch(changeCartCount({ id: product.id, value: product.count + 1 })) }}>
                                                                         <AddCircleIcon />
@@ -138,6 +142,7 @@ function Cart() {
                     </div>
                 </div>
             </div>
+            <BuyModal/>
         </>
     )
 }
