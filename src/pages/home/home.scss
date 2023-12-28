@@ -113,7 +113,7 @@ p {
 
 .homeBottom {
     width: 100%;
-    background-color: #f8f9fd;
+    // background-color: #f8f9fd;
     border-radius: 10px;
     padding: 30px;
     display: flex;
@@ -129,7 +129,7 @@ p {
 
 .partnerText {
     font-size: 20px;
-    color: black;
+    color: white;
 }
 
 .horizondalLine {
@@ -142,4 +142,8 @@ p {
 .bottomIcons {
     @include d-jc-ai(space-between);
     width: 80%;
+}
+
+.css-oxfx9-MuiPaper-root-MuiMobileStepper-root{
+    display: none !important;
 }

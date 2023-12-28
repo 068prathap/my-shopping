@@ -12,6 +12,7 @@ function Router() {
                     <Route exact path='/preview/:id' render={()=> <MiniDrawer page={'preview'}/>}/>
                     <Route exact path='/about' render={()=> <MiniDrawer page={'about'}/>}/>
                     <Route exact path='/cart' render={()=> <MiniDrawer page={'cart'}/>}/>
+                    <Route exact path='/wishlist' render={()=> <MiniDrawer page={'wishList'}/>}/>
                     <Route path='*' render={()=> <p>404 page not fount</p>}/>
                 </Switch>
             </BrowserRouter>

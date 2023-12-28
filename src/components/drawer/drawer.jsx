@@ -33,6 +33,10 @@ import GroupWorkIcon from '@mui/icons-material/GroupWork';
 import { setSelectedCategory } from '../../services/slice';
 import About from '../../pages/about/about';
 import Cart from '../../pages/cart/cart';
+import ThemeButton from '../themeButton/themeButton';
+import Badge from '@mui/material/Badge';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import WishList from '../../pages/wishList/wishList';
 
 const drawerWidth = 240;
 
@@ -106,10 +110,14 @@ export default function MiniDrawer(props) {
     const [open, setOpen] = React.useState(false);
     const dispatch = useDispatch()
     const [category, setCategory] = useState([])
+    const theme = useSelector(state => state.product.theme);
+    // const drawerIconColor = theme === 'light' ? 'black' : 'white'
     const drawerIcons = [<GroupWorkIcon sx={{ color: 'white' }} />, <TungstenIcon sx={{ color: 'white' }} />, <DiamondIcon sx={{ color: 'white' }} />, <ManIcon sx={{ color: 'white' }} />, <WomanIcon sx={{ color: 'white' }} />]
     const selectedCategory = useSelector(state => state.product.selectedCategory)
     const [profileOpen, setProfileOpen] = useState(false)
     const history = useHistory()
+    const previewParent = useSelector(state => state.product.previewParent)
+    const cartList = useSelector(state => state.product.cartList)
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -140,58 +148,61 @@ export default function MiniDrawer(props) {
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
-            <Drawer variant="permanent" open={open} PaperProps={{ sx: { backgroundColor: "rgb(121,88,149)", color: "white", } }}>
-                <DrawerHeader sx={{ backgroundColor: 'rgb(121,88,149)' }}>
-                    {
-                        open ?
-                            <>
-                                <Box sx={{ textAlign: 'center', width: '100%', fontSize: '30px' }}>Categories</Box>
-                                <IconButton onClick={handleDrawerClose} color='inherit'>
-                                    <ChevronLeftIcon />
-                                </IconButton>
-                            </>
-                            :
-                            <IconButton
-                                color="inherit"
-                                aria-label="open drawer"
-                                onClick={handleDrawerOpen}
-                                edge="start"
-                                sx={{
-                                    ...(open && { display: 'none' })
-                                }}
-                            >
-                                <MenuIcon sx={{ mr: '3px' }} />
-                            </IconButton>
-                    }
-                </DrawerHeader>
-                <Divider />
-                <List sx={{ backgroundColor: 'rgb(121,88,149)' }}>
-                    {category.map((text, index) => (
-                        <ListItem key={text} disablePadding sx={{ display: 'block' }} className={`categoryTab ${text === selectedCategory ? 'activeCategory' : ''}`} onClick={() => { changeCategory(text) }}>
-                            <ListItemButton
-                                sx={{
-                                    minHeight: 48,
-                                    justifyContent: open ? 'initial' : 'center',
-                                    px: 2.5,
-                                }}
-                            >
-                                <ListItemIcon
+            {
+                props.page === 'shop' &&
+                <Drawer variant="permanent" open={open} PaperProps={{ sx: { color: "white", backgroundColor: `${theme === 'light' ? 'rgb(0,0,0)' : 'rgb(121,88,149)'}`, borderRight: '1px solid white' } }}>
+                    <DrawerHeader sx={{ backgroundColor: `${theme === 'light' ? 'rgb(0,0,0)' : 'rgb(121,88,149)'}`, borderBottom: '1px solid white' }}>
+                        {
+                            open ?
+                                <>
+                                    <Box sx={{ textAlign: 'center', width: '100%', fontSize: '30px' }}>Categories</Box>
+                                    <IconButton onClick={handleDrawerClose} color='inherit'>
+                                        <ChevronLeftIcon />
+                                    </IconButton>
+                                </>
+                                :
+                                <IconButton
+                                    color="inherit"
+                                    aria-label="open drawer"
+                                    onClick={handleDrawerOpen}
+                                    edge="start"
                                     sx={{
-                                        minWidth: 0,
-                                        mr: open ? 3 : 'auto',
-                                        justifyContent: 'center',
+                                        ...(open && { display: 'none' })
                                     }}
                                 >
-                                    {drawerIcons[index]}
-                                </ListItemIcon>
-                                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-                            </ListItemButton>
-                        </ListItem>
-                    ))}
-                </List>
-            </Drawer>
+                                    <MenuIcon sx={{ mr: '3px' }} />
+                                </IconButton>
+                        }
+                    </DrawerHeader>
+                    <Divider />
+                    <List sx={{ backgroundColor: `${theme === 'light' ? 'rgb(0,0,0)' : 'rgb(121,88,149)'}` }}>
+                        {category.map((text, index) => (
+                            <ListItem key={text} disablePadding sx={{ display: 'block' }} className={`${theme === 'light' ? '' : ''} ${text === selectedCategory ? theme === 'light' ? 'bgColorDarkActive' : 'bgColorLightActive' : ''}`} onClick={() => { changeCategory(text) }}>
+                                <ListItemButton
+                                    sx={{
+                                        minHeight: 48,
+                                        justifyContent: open ? 'initial' : 'center',
+                                        px: 2.5,
+                                    }}
+                                >
+                                    <ListItemIcon
+                                        sx={{
+                                            minWidth: 0,
+                                            mr: open ? 3 : 'auto',
+                                            justifyContent: 'center',
+                                        }}
+                                    >
+                                        {drawerIcons[index]}
+                                    </ListItemIcon>
+                                    <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                                </ListItemButton>
+                            </ListItem>
+                        ))}
+                    </List>
+                </Drawer>
+            }
             <Box component="main" sx={{ flexGrow: 1 }}>
-                <div className='homePage'>
+                <div className={`homePage ${theme === 'light' ? 'bgDark' : 'bgLight'}`}>
                     <div className="homeBannerOuter">
                         <div className="homeBanner">
                             <div className='homeHeader'>
@@ -202,30 +213,38 @@ export default function MiniDrawer(props) {
                                         <p className='shoppingIconTitle2'>Shopping</p>
                                     </div>
                                 </div>
-                                <div className='homeHeaderTabs'>
-                                    <Link to='/'><p className={`headerHomeTab ${props.page === 'home' ? 'activeTab' : ''}`}>Home</p></Link>
-                                    <Link to='/shop'><p className={`headerShopTab ${props.page === 'shop' || props.page === 'preview' || props.page === 'cart' ? 'activeTab' : ''}`}>Shop</p></Link>
-                                    <Link to='/about'><p className={`headerAboutTab ${props.page === 'about' ? 'activeTab' : ''}`}>About</p></Link>
+                                <div className={`homeHeaderTabs`}>
+                                    <Link to='/'><p className={`headerHomeTab ${props.page === 'home' ? 'activeTab' : ''} ${theme === 'light' ? 'colorBlack' : 'colorWhite'}`}>Home</p></Link>
+                                    <Link to='/shop'><p className={`headerShopTab ${props.page === 'shop' || (props.page === 'preview' && previewParent === 'shop') ? 'activeTab' : ''} ${theme === 'light' ? 'colorBlack' : 'colorWhite'}`}>Shop</p></Link>
+                                    <Link to='/about'><p className={`headerAboutTab ${props.page === 'about' ? 'activeTab' : ''} ${theme === 'light' ? 'colorBlack' : 'colorWhite'}`}>About</p></Link>
                                 </div>
                                 <div className='headerIcons'>
+                                    <div>
+                                        <ThemeButton />
+                                    </div>
                                     <Link to='/cart' className='Link'>
-                                        <div className='headerSideIcon' >
-                                            <LocalMallRoundedIcon />
+                                        <div className={`headerSideIcon ${props.page === 'cart' ? 'activeTab' : ''}`} >
+                                            <Badge badgeContent={cartList.length} color="primary">
+                                                <ShoppingCartIcon />
+                                            </Badge>
                                         </div>
                                     </Link>
-                                    <div className='headerSideIcon' >
-                                        <FavoriteRoundedIcon />
-                                    </div>
-                                    <div className='headerSideIcon profileTab'>
+                                    <Link to='/wishList' className='Link'>
+                                        <Box className={`headerSideIcon ${props.page === 'wishList' ? 'activeTab' : ''}`} sx={{ display: 'flex' }} >
+                                            <FavoriteRoundedIcon />
+                                        </Box>
+                                    </Link>
+                                    <Box className='headerSideIcon profileTab' sx={{ display: 'flex' }}>
                                         <AccountCircleRoundedIcon onClick={() => { setProfileOpen(state => !state) }} />
-                                        {profileOpen ?
-                                            <Box sx={{ position: 'absolute', bgcolor: 'white', color: 'black', padding: '10px 30px', borderRadius: '20px', right: '0px', zIndex: 1 }}>
-                                                <p>Hi, Prathap</p>
-                                            </Box>
-                                            :
-                                            null
+                                        {
+                                            profileOpen ?
+                                                <Box sx={{ position: 'absolute', bgcolor: 'white', color: 'black', padding: '10px 30px', borderRadius: '20px', right: '0px', zIndex: 1 }}>
+                                                    <p>Hi, Prathap</p>
+                                                </Box>
+                                                :
+                                                null
                                         }
-                                    </div>
+                                    </Box>
                                 </div>
                             </div>
                             {props.page === 'home' && <Home />}
@@ -233,6 +252,7 @@ export default function MiniDrawer(props) {
                             {props.page === 'preview' && <Preview />}
                             {props.page === 'about' && <About />}
                             {props.page === 'cart' && <Cart />}
+                            {props.page === 'wishList' && <WishList />}
                         </div>
                     </div>
                 </div>

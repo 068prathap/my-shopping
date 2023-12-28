@@ -1,13 +1,5 @@
 @use '../../pages/home/home.scss';
 
-.categoryTab:hover{
-    background-color: #e9a4d2;
-}
-
-.activeCategory{
-    background-color: #e9a4d2;
-}
-
 .homePage{
     min-height: 100vh;
 }
@@ -51,15 +43,16 @@
 }
 
 .headerIcons {
-    @include home.d-jc(space-around);
+    @include home.d-jc-ai(space-around);
     width: 15%;
+    gap:5px
 }
 
 .headerHomeTab {
     cursor: pointer;
     padding: 5px 15px;
     border-radius: 100px;
-    color: white;
+    // color: white;
     text-decoration: underline;
     font-weight: bolder;
 }

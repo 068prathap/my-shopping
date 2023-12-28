@@ -5,31 +5,34 @@ import MenuItem from '@mui/material/MenuItem';
 import { useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAllProducts } from '../../services/thunkFunctions';
-import ProductCard from '../../components/productCard/productCrad';
 import Loader from '../../components/loader/loader';
-import { getSpecificProducts } from '../../services/thunkFunctions';
-import { setSorting } from '../../services/slice';
-import { getAllCarts } from '../../services/thunkFunctions';
+import { setSorting, sortCart, removeCart, changeCartCount } from '../../services/slice';
+import Rating from '@mui/material/Rating';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import { IconButton } from '@mui/material';
+import LocalMallIcon from '@mui/icons-material/LocalMall';
+import { Box } from '@mui/material';
+import CheckCircleOutlineSharpIcon from '@mui/icons-material/CheckCircleOutlineSharp';
 
 function Cart() {
-    const [productsList, setProductsList] = useState(useSelector(state => state.product.cartList));
+    const cartList = useSelector(state => state.product.cartList)
     const dispatch = useDispatch()
     const [isLoading, setIsLoading] = useState(false)
     const sorting = useSelector(state => state.product.sorting)
-    const selectedCategory = useSelector(state => state.product.selectedCategory)
-    const count = productsList.length
-    const [totalAmount, setTotalAmount]=useState(0)
+    // const selectedCategory = useSelector(state => state.product.selectedCategory)
+    const count = cartList.length
+    const [totalAmount, setTotalAmount] = useState(0)
+    const theme = useSelector(state => state.product.theme)
 
-    // useEffect(() => {
-    //     (async () => {
-    //         let result
-    //         result = await dispatch(getAllCarts())
-    //         sortList(sorting, [...result.payload])
-    //     })()
-    // }, [])
+    useEffect(() => {
+        const totalAmount = cartList.reduce((acc, curr) => {
+            return acc + curr.totalPrice
+        }, 0)
+        setTotalAmount(totalAmount.toFixed(2))
+    }, [cartList])
 
-    function sortList(sorting, list = [...productsList]) {
+    function sortList(sorting, list = [...cartList]) {
         if (sorting === 'Rating') {
             list.sort(function (a, b) { return a.rating.rate - b.rating.rate });
         }
@@ -39,8 +42,7 @@ function Cart() {
         else {
             list.sort(function (a, b) { return a.id - b.id });
         }
-        setProductsList(list)
-        setIsLoading(false)
+        dispatch(sortCart(list))
         dispatch(setSorting(sorting))
     }
 
@@ -48,35 +50,28 @@ function Cart() {
         <>
             <div className='shopPageOuter'>
                 <div className='shopPage'>
-                    <div className='shopHeadingOuter'>
+                    <div className={`shopHeadingOuter ${theme === 'light' ? 'bgColorDark' : 'bgColorLight'}`}>
                         <div className='shopHeading'>
                             <div className='subFlex'>
                                 <div className='productDiv'>
-                                    <p className='productText'>Products</p>
+                                    <p className='productText'>Total Amount ₹{totalAmount}</p>
                                 </div>
                                 <div className='shopTitleDiv'>
-                                    <h1 className='shopTitle'>Shop</h1>
+                                    <h1 className='shopTitle'>Cart</h1>
                                 </div>
                             </div>
-                            <div className='shopHeaderResult'>
-                                <p className='shopResult'>Showing 1-{count} of {count} results</p>
-                                <div>
-                                    <FormControl sx={{ m: 1, mr: 0, minWidth: 160, maxWidth: 160, border: '1px solid white', borderRadius: '5px', textAlign: 'center' }} size='small'>
-                                        <Select
-                                            value={sorting}
-                                            onChange={(e) => { sortList(e.target.value) }}
-                                            displayEmpty
-                                            inputProps={{ 'aria-label': 'Without label', sx: { color: 'white' } }}
-                                        >
-                                            <MenuItem value="">
-                                                <em>Default Sorting</em>
-                                            </MenuItem>
-                                            <MenuItem value={'Rating'}>Rating for the products  </MenuItem>
-                                            <MenuItem value={'Price'}>Price</MenuItem>
-                                        </Select>
-                                    </FormControl>
-                                </div>
-                            </div>
+                            <Box className='shopHeaderResult' sx={{ display: 'flex', justifyContent: 'right' }}>
+                                {count ?
+                                    <>
+                                        <Box className='backButton'>
+                                            <p className='productText cartBuyText'>Buy now</p>
+                                            <LocalMallIcon />
+                                        </Box>
+                                    </>
+                                    :
+                                    <p className='shopResult'>Your cart is empty</p>
+                                }
+                            </Box>
                         </div>
                     </div>
                     <div className='divider'></div>
@@ -87,11 +82,54 @@ function Cart() {
                                     <Loader />
                                 </div>
                                 :
-                                <Grid container spacing={{ lg: 5, xl: 10 }} sx={{ overflowY: 'scroll', p: 0 }} className='productListGrid'>
-                                    {productsList.map(obj => {
+                                <Grid container spacing={{ lg: 0, xl: 0 }} sx={{ overflowY: 'scroll', p: 0, mt: { xs: '0px' } }} className='productListGrid'>
+                                    {cartList.map(product => {
                                         return (
-                                            <Grid item xs={4} md={6} lg={4} className='productGrid' key={obj.id}>
-                                                <ProductCard product={obj} />
+                                            <Grid item xs={4} md={12} lg={12} className='productGrid' key={product.id} sx={{ display: 'flex', justifyContent: 'center' }}>
+                                                {/* <ProductCard product={product} pageType={'cart'} /> */}
+
+                                                <div className='cartProduct'>
+                                                    <div className='cartImageOuter'>
+                                                        <img className='cartImage' src={product.image} alt="" />
+                                                    </div>
+                                                    <div className='cartProductDetails'>
+                                                        <div className='cartSelectedDetails'>
+                                                            <h2 className='productName cartProductName'>{product.title}</h2>
+                                                            <div className='productRating CartProductRating'>
+                                                                <p className='productReview'>Review: </p>
+                                                                <Rating name="half-rating-read" defaultValue={product.rating.rate} precision={0.5} readOnly size='small' />
+                                                                <p className='productCount'>{product.rating.rate} ({product.rating.count})</p>
+                                                            </div>
+                                                            <p className='cartProductColor'>Color: {product.color}</p>
+                                                            <p className='cartProductSize'>Size: {product.size}</p>
+                                                        </div>
+                                                        <div className='cartQtyDetails'>
+                                                            <div>
+                                                                <div className='quantityHandle'>
+                                                                    <IconButton color='inherit' onClick={() => { product.count > 1 && dispatch(changeCartCount({ id: product.id, value: product.count - 1 })) }}>
+                                                                        <RemoveCircleIcon />
+                                                                    </IconButton>
+                                                                    <p className='cartQtyCount'>
+                                                                        Quantity:
+                                                                        <input className='qtyInput' type="text" value={product.count} onChange={(e) => { dispatch(changeCartCount({ id: product.id, value: +e.target.value })) }} />
+                                                                        <Box sx={{display:'flex'}}>
+                                                                            <CheckCircleOutlineSharpIcon />
+                                                                        </Box>
+                                                                    </p>
+                                                                    <IconButton color='inherit' onClick={() => { dispatch(changeCartCount({ id: product.id, value: product.count + 1 })) }}>
+                                                                        <AddCircleIcon />
+                                                                    </IconButton>
+                                                                </div>
+                                                                <div>
+                                                                    <p className='cartTotalPrice'>Total Price: {product.totalPrice.toFixed(2)} </p>
+                                                                </div>
+                                                            </div>
+                                                            <div className='addCartButton cartRemoveButton' onClick={() => { dispatch(removeCart(product.id)) }}>
+                                                                <p>Remove Item</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </Grid>
                                         )
                                     })}

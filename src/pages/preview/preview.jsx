@@ -11,6 +11,8 @@ import { Link, useHistory } from 'react-router-dom';
 import Rating from '@mui/material/Rating';
 import Loader from '../../components/loader/loader';
 import { getSpecificProducts, getAllProducts } from '../../services/thunkFunctions';
+import { addCart, sortCart } from '../../services/slice';
+import { Box } from '@mui/system';
 
 function Preview() {
     const params = useParams()
@@ -21,10 +23,18 @@ function Preview() {
     const [activeColor, setActiveColor] = useState('blue')
     const [limit, setLimit] = useState(0)
     const selectedCategory = useSelector(state => state.product.selectedCategory)
+    // const productList = useSelector(state => state.product.cartList)
     const [productList, setProductList] = useState([])
     const history = useHistory()
     const sorting = useSelector(state => state.product.sorting)
-    let tempImgRotate='';
+    let tempImgRotate = '';
+    const theme = useSelector(state => state.product.theme)
+    const previewParent = useSelector(state => state.product.previewParent)
+    const cartList=useSelector(state=>state.product.cartList)
+    const [selectedSize,setSelectedSize]=useState(37)
+    const isCart = cartList.some(obj => {
+        return obj.title === productDetails.title && obj.color === activeColor[0].toUpperCase() + activeColor.slice(1) && obj.size === selectedSize
+    })
 
     function changeImgRotate(value) {
         setImgRotate(value);
@@ -39,6 +49,16 @@ function Preview() {
             return obj.id === +params.id
         })
         history.push(`/preview/${productList[index + 1].id}`)
+        // if (index + 1 < productList.length) {
+        //     console.log(productList);
+        //     history.push(`/preview/${productList[index + 1].id}`)
+        // }
+        // else if (+params.id === productList[0]?.id) {
+        //     history.push('/cart')
+        // }
+        // else {
+        //     previousProduct()
+        // }
     }
 
     function previousProduct() {
@@ -54,6 +74,7 @@ function Preview() {
             setIsLoading(false)
             setProductDetails(result.payload)
 
+            // if (previewParent === 'shop') {
             if (selectedCategory === 'All') {
                 result = await dispatch(getAllProducts())
             }
@@ -64,32 +85,32 @@ function Preview() {
                 })
                 result = await dispatch(getSpecificProducts(newName))
             }
-            // setProductList(result.payload)
-            sortList([...result.payload])
+            result = result.payload;
+            // }
+            // else {
+            //     result = productList
+            // }
+            sortList([...result])
         })()
     }, [params])
 
     useEffect(() => {
-        const imageRotation=setInterval(() => {
-            // console.log('hi',tempImgRotate);
-            if (tempImgRotate==='')
-            {
+        const imageRotation = setInterval(() => {
+            if (tempImgRotate === '') {
                 setImgRotate('rotate45')
-                tempImgRotate='rotate45';
+                tempImgRotate = 'rotate45';
             }
-            else if(tempImgRotate==='rotate45')
-            {
+            else if (tempImgRotate === 'rotate45') {
                 setImgRotate('rotate90')
-                tempImgRotate='rotate90';
+                tempImgRotate = 'rotate90';
             }
-            else
-            {
+            else {
                 setImgRotate('')
-                tempImgRotate='';
+                tempImgRotate = '';
             }
         }, 5000);
 
-        return ()=>clearInterval(imageRotation);
+        return () => clearInterval(imageRotation);
     }, [])
 
     function sortList(list) {
@@ -103,18 +124,24 @@ function Preview() {
             list.sort(function (a, b) { return a.id - b.id });
         }
         setLimit(list[list.length - 1].id)
+        // dispatch(sortCart(list))
         setProductList(list)
+    }
+
+    function handleAddCart() {
+        const newProduct = { ...productDetails, color:activeColor[0].toUpperCase() + activeColor.slice(1), size:selectedSize, id:cartList.length+1 };
+        dispatch(addCart(newProduct))
     }
 
     return (
         <>
             <div className='previewPageOuter'>
                 <div className='previewPage'>
-                    <div className='previewHeadingOuter'>
+                    <div className={`previewHeadingOuter ${theme === 'light' ? 'bgColorDark' : 'bgColorLight'}`}>
                         <div className='previewHeading'>
                             <div className='subFlex'>
                                 <div className='productDiv'>
-                                    <Link to='/shop' className='link'>
+                                    <Link to={`/${previewParent}`} className='link'>
                                         <div className='backButton'>
                                             <ArrowBackIcon />
                                             <p className='productText'>Back</p>
@@ -150,7 +177,7 @@ function Preview() {
                                 </div>
                                 :
                                 <div className='productDetails'>
-                                    <Grid container spacing={3} sx={{ p: 0 }} className='productDetailsGrid'>
+                                    <Grid container spacing={3} sx={{ p: 0, mt:{xs:'0px'} }} className='productDetailsGrid'>
                                         <Grid item xs={4} md={6} lg={4} className=''>
                                             <h1 className='productName'>{productDetails.title}</h1>
                                             <p className='productDis'>{productDetails.description}</p>
@@ -204,20 +231,20 @@ function Preview() {
                                                     <p className='sizeTitle'>Size: </p>
                                                     <div>
                                                         <div className='sizeList1'>
-                                                            <div className='size'>37</div>
-                                                            <div className='size'>38</div>
-                                                            <div className='size'>39</div>
+                                                            <Box className='size' sx={{bgcolor:`${selectedSize===37 && (theme==='light' ? 'black' : '#e9a4d2')}`, color:`${selectedSize===37 && 'white'}`}} onClick={()=>{setSelectedSize(37)}}>37</Box>
+                                                            <Box className='size' sx={{bgcolor:`${selectedSize===38 && (theme==='light' ? 'black' : '#e9a4d2')}`, color:`${selectedSize===38 && 'white'}`}} onClick={()=>{setSelectedSize(38)}}>38</Box>
+                                                            <Box className='size' sx={{bgcolor:`${selectedSize===39 && (theme==='light' ? 'black' : '#e9a4d2')}`, color:`${selectedSize===39 && 'white'}`}} onClick={()=>{setSelectedSize(39)}}>39</Box>
                                                         </div>
                                                         <div className='sizeList1'>
-                                                            <div className='size'>40</div>
-                                                            <div className='size'>41</div>
-                                                            <div className='size'>42</div>
+                                                            <Box className='size' sx={{bgcolor:`${selectedSize===40 && (theme==='light' ? 'black' : '#e9a4d2')}`, color:`${selectedSize===40 && 'white'}`}} onClick={()=>{setSelectedSize(40)}}>40</Box>
+                                                            <Box className='size' sx={{bgcolor:`${selectedSize===41 && (theme==='light' ? 'black' : '#e9a4d2')}`, color:`${selectedSize===41 && 'white'}`}} onClick={()=>{setSelectedSize(41)}}>41</Box>
+                                                            <Box className='size' sx={{bgcolor:`${selectedSize===42 && (theme==='light' ? 'black' : '#e9a4d2')}`, color:`${selectedSize===42 && 'white'}`}} onClick={()=>{setSelectedSize(42)}}>42</Box>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div className='addCartButton rightSidePart'>
-                                                    <p>Add to Cart</p>
-                                                </div>
+                                                <Box className='addCartButton rightSidePart' sx={{ opacity: `${isCart && 0.2}`, pointerEvents: `${isCart && 'none'}` }} onClick={() => { handleAddCart() }}>
+                                                    <p>{previewParent === 'shop' ? 'Add to' : 'Remove from'} Cart</p>
+                                                </Box>
                                             </div>
                                         </Grid>
                                     </Grid>

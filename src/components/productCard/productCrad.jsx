@@ -8,33 +8,53 @@ import ZoomOutMapIcon from '@mui/icons-material/ZoomOutMap';
 import './productCard.scss'
 import LocalMallIcon from '@mui/icons-material/LocalMall';
 import Rating from '@mui/material/Rating';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { useState } from 'react';
 import { Box } from '@mui/system';
-import { addCart } from '../../services/slice';
-import { useDispatch } from 'react-redux';
+import { addCart, removeCart, addWishList, removeWishList } from '../../services/slice';
+import { useDispatch, useSelector } from 'react-redux';
+import CloseIcon from '@mui/icons-material/Close';
+import { setPreviewParent } from '../../services/slice';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 
-function ProductCard({ product }) {
+function ProductCard({ product, pageType }) {
     const [rating, setRating] = useState(product.rating.rate)
     const dispatch = useDispatch()
+    const wishList = useSelector(state => state.product.wishList)
+    const isWart = wishList.some(obj => {
+        return obj.id === product.id
+    })
+    const history=useHistory()
+
+    function handleAddCart() {
+        const newProduct={...product};
+        dispatch(addWishList(newProduct))
+    }
 
     return (
         <>
-            <Card sx={{ borderRadius: '50px', p: '10px', height: '100%', position: 'relative', textAlign: 'center', boxFlexGroup: 'rgba(255, 255, 255, 0.1)' }}>
+            <Card sx={{ borderRadius: '50px', p: '10px', height: '100%', position: 'relative', textAlign: 'center', boxFlexGroup: 'rgba(255, 255, 255, 0.1)', bgcolor: 'white' }}>
                 <CardHeader
+                    sx={{pb:'0px'}}
                     avatar={
                         <IconButton>
                             <Link to={`/preview/${product.id}`}>
-                                <div className='headerIcon'>
+                                <div className='headerIcon' onClick={() => { dispatch(setPreviewParent(pageType === 'shop' ? 'shop' : 'cart')) }}>
                                     <ZoomOutMapIcon />
                                 </div>
                             </Link>
                         </IconButton>
                     }
-                    action={
-                        <IconButton className='addCartIcon' onClick={() => { dispatch(addCart(product)) }}>
+                    action={pageType === 'shop' ?
+                        <IconButton className='addCartIcon' onClick={() => { handleAddCart() }} sx={{ opacity: `${isWart && 0.1}`, pointerEvents: `${isWart && 'none'}` }} >
                             <div className='headerIcon'>
-                                <LocalMallIcon />
+                                <FavoriteIcon />
+                            </div>
+                        </IconButton>
+                        :
+                        <IconButton className='addCartIcon' onClick={() => { dispatch(removeWishList(product.id)) }}>
+                            <div className='headerIcon'>
+                                <CloseIcon />
                             </div>
                         </IconButton>
                     }
@@ -47,13 +67,14 @@ function ProductCard({ product }) {
                         height="150"
                         image={product.image}
                         alt="Paella dish"
-                        sx={{ objectFit: 'contain', zIndex: 1, position: 'absolute' }}
+                        sx={{ objectFit: 'contain', zIndex: 1, position: 'absolute', cursor:'pointer' }}
                         className='shopcardImage'
+                        onClick={()=>{history.push(`/preview/${product.id}`)}}
                     />
                 </div>
                 <Box sx={{ height: '150px' }}></Box>
                 <Rating name="half-rating-read" defaultValue={rating} precision={0.5} readOnly size='small' sx={{ paddingTop: '16px' }} />
-                <CardContent sx={{ pt: 0 }}>
+                <CardContent sx={{ pt: 0, pb:'5px !important' }}>
                     <Typography variant="h6" color="black" textAlign={'center'}>
                         <p className='productTitle'>{product.title}</p>
                         <p className='productPrice'>₹{product.price}</p>

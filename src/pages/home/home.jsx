@@ -7,19 +7,12 @@ import NikeIcon from '../../assests/nikeIcon.png'
 import reebok from '../../assests/reebokIcon.png'
 import XboxIcon from '../../assests/xboxIcon.png'
 import PumaIcon from '../../assests/pumaIcon.png'
-
 import Box from '@mui/material/Box';
-import { useTheme } from '@mui/material/styles';
 import MobileStepper from '@mui/material/MobileStepper';
-import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
-import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import React, { useEffect } from 'react'
 import MensClothing from '../../assests/mensClothing.png'
 import Jewellery from '../../assests/jewellery.png'
-import { hover } from '@testing-library/user-event/dist/hover'
+import { useSelector } from 'react-redux'
 
 function Home() {
     const steps = [
@@ -46,22 +39,13 @@ function Home() {
         },
     ];
 
-    const theme = useTheme();
     const [activeStep, setActiveStep] = React.useState(0);
     let tempActiveStep = 0;
     const maxSteps = steps.length;
-
-    const handleNext = () => {
-        setActiveStep((prevActiveStep) => prevActiveStep + 1);
-    };
-
-    const handleBack = () => {
-        setActiveStep((prevActiveStep) => prevActiveStep - 1);
-    };
+    const pageTheme=useSelector(state=>state.product.theme)
 
     useEffect(() => {
         const imageRotation = setInterval(() => {
-            console.log('tempActiveStep', tempActiveStep);
             if (tempActiveStep + 1 < maxSteps) {
                 tempActiveStep += 1;
                 setActiveStep(tempActiveStep);
@@ -96,53 +80,25 @@ function Home() {
                         <div className='imageBg'></div> */}
                         <Box sx={{ maxWidth: 400, flexGrow: 1 }}>
                             <Box sx={{ width: '100%', position: 'relative', display: 'flex', justifyContent: 'space-between' }}>
-                                {/* <Button size="small" onClick={handleBack} disabled={activeStep === 0} sx={{zIndex:1, '&:hover':{backgroundColor:'transparent'}}}>
-                                    {theme.direction === 'rtl' ? (
-                                        <KeyboardArrowRight />
-                                    ) : (
-                                        <KeyboardArrowLeft />
-                                    )}
-                                    Back
-                                </Button> */}
                                 <Box sx={{width:'100%'}}>
                                     {steps[activeStep].description}
                                 </Box>
-                                {/* <Button
-                                    size="small"
-                                    onClick={handleNext}
-                                    disabled={activeStep === maxSteps - 1}
-                                    sx={{zIndex:1, '&:hover':{backgroundColor:'transparent'}}}
-                                >
-                                    Next
-                                    {theme.direction === 'rtl' ? (
-                                        <KeyboardArrowLeft />
-                                    ) : (
-                                        <KeyboardArrowRight />
-                                    )}
-                                </Button> */}
                             </Box>
                             <MobileStepper
-                                // variant="text"
-                                // steps={maxSteps}
-                                // position='relative'
                                 activeStep={activeStep}
-                            // nextButton={
-                            // }
-                            // backButton={
-                            // }
                             />
                         </Box>
                     </div>
                 </div>
             </div>
             <div className='homeBottomOuter'>
-                <div className='homeBottom'>
+                <div className={`homeBottom  ${pageTheme==='light' ? 'bgColorDark' : 'bgColorLight'}`}>
                     <div>
                         <p className='partnerCount'>1800+</p>
                         <p className='partnerText'>Trusted partners</p>
                     </div>
                     <div className='horizondalLine'></div>
-                    <div className='bottomIcons'>
+                    <div className={`bottomIcons`}>
                         <img src={AdidasIcon} alt="" width={'60px'} />
                         <img src={XboxIcon} alt="" width={'45px'} />
                         <img src={NikeIcon} alt="" width={'80px'} />
