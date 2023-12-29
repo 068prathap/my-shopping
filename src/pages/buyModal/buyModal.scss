@@ -6,14 +6,14 @@
 
 .dateselectInput {
     fieldset {
-        border-left: 0px;
+        border-left: 1px;
         border-top-left-radius: 0px;
         border-bottom-left-radius: 0px;
     }
 
     &:hover {
         fieldset {
-            border-left: 1px;
+            border-left: 2px !important;
         }
     }
 }

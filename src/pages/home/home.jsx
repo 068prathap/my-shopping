@@ -12,6 +12,7 @@ import MobileStepper from '@mui/material/MobileStepper';
 import React, { useEffect } from 'react'
 import MensClothing from '../../assests/mensClothing.png'
 import Jewellery from '../../assests/jewellery.png'
+import Electronics from '../../assests/electronics.png'
 import { useSelector } from 'react-redux'
 
 function Home() {
@@ -34,6 +35,13 @@ function Home() {
             label: 'Create an ad',
             description: <>
                 <img src={Jewellery} alt="" className='homeBannerImage' />
+                <div className='imageBg'></div>
+            </>,
+        },
+        {
+            label: 'Create an ad',
+            description: <>
+                <img src={Electronics} alt="" className='homeBannerImage' />
                 <div className='imageBg'></div>
             </>,
         },

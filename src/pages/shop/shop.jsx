@@ -9,13 +9,13 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Loader from '../../components/loader/loader';
 import { getSpecificProducts } from '../../services/thunkFunctions';
-import { setSorting } from '../../services/slice';
+import { setShopSorting } from '../../services/slice';
 
 function Shop() {
     const [productsList, setProductsList] = useState([]);
     const dispatch = useDispatch()
     const [isLoading, setIsLoading] = useState(true)
-    const sorting = useSelector(state => state.product.sorting)
+    const sorting = useSelector(state => state.product.shopSorting)
     const selectedCategory = useSelector(state => state.product.selectedCategory)
     const count =productsList.length
     const theme=useSelector(state=>state.product.theme)
@@ -47,7 +47,7 @@ function Shop() {
         }
         setProductsList(list)
         setIsLoading(false)
-        dispatch(setSorting(sorting))
+        dispatch(setShopSorting(sorting))
     }
 
     return (

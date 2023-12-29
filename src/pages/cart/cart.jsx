@@ -6,22 +6,18 @@ import { useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
 import { useDispatch, useSelector } from 'react-redux';
 import Loader from '../../components/loader/loader';
-import { setSorting, sortCart, removeCart, changeCartCount, setModalOpen } from '../../services/slice';
-import Rating from '@mui/material/Rating';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import { IconButton } from '@mui/material';
+import { sortCart, removeCart, changeCartCount, setModalOpen } from '../../services/slice';
 import LocalMallIcon from '@mui/icons-material/LocalMall';
 import { Box } from '@mui/material';
-import CheckCircleOutlineSharpIcon from '@mui/icons-material/CheckCircleOutlineSharp';
 import BuyModal from '../buyModal/buyModal';
 import { useHistory } from 'react-router-dom';
+import CartCard from '../../components/cartCard/cartCard';
 
 function Cart() {
     const cartList = useSelector(state => state.product.cartList)
     const dispatch = useDispatch()
     const [isLoading, setIsLoading] = useState(false)
-    const sorting = useSelector(state => state.product.sorting)
+    // const sorting = useSelector(state => state.product.sorting)
     // const selectedCategory = useSelector(state => state.product.selectedCategory)
     const count = cartList.length
     const [totalAmount, setTotalAmount] = useState(0)
@@ -36,19 +32,23 @@ function Cart() {
         setTotalAmount(totalAmount.toFixed(2))
     }, [cartList])
 
-    function sortList(sorting, list = [...cartList]) {
-        if (sorting === 'Rating') {
-            list.sort(function (a, b) { return a.rating.rate - b.rating.rate });
-        }
-        else if (sorting === 'Price') {
-            list.sort(function (a, b) { return a.price - b.price });
-        }
-        else {
-            list.sort(function (a, b) { return a.id - b.id });
-        }
-        dispatch(sortCart(list))
-        dispatch(setSorting(sorting))
-    }
+    // function sortList(sorting, list = [...cartList]) {
+    //     if (sorting === 'Rating') {
+    //         list.sort(function (a, b) { return a.rating.rate - b.rating.rate });
+    //     }
+    //     else if (sorting === 'Price') {
+    //         list.sort(function (a, b) { return a.price - b.price });
+    //     }
+    //     else {
+    //         list.sort(function (a, b) { return a.id - b.id });
+    //     }
+    //     dispatch(sortCart(list))
+    //     dispatch(setSorting(sorting))
+    // }
+
+    useEffect(() => {
+        return ()=>dispatch(setModalOpen(false))
+    }, [])
 
     return (
         <>
@@ -89,52 +89,7 @@ function Cart() {
                                 <Grid container spacing={{ lg: 0, xl: 0 }} sx={{ overflowY: 'scroll', p: 0, mt: { xs: '0px' } }} className='productListGrid'>
                                     {cartList.map(product => {
                                         return (
-                                            <Grid item xs={4} md={12} lg={12} className='productGrid' key={product.id} sx={{ display: 'flex', justifyContent: 'center' }}>
-                                                {/* <ProductCard product={product} pageType={'cart'} /> */}
-
-                                                <div className='cartProduct'>
-                                                    <div className='cartImageOuter'>
-                                                        <img className='cartImage' src={product.image} alt="" />
-                                                    </div>
-                                                    <div className='cartProductDetails'>
-                                                        <div className='cartSelectedDetails'>
-                                                            <h2 className='productName cartProductName'>{product.title}</h2>
-                                                            <div className='productRating CartProductRating'>
-                                                                <p className='productReview'>Review: </p>
-                                                                <Rating name="half-rating-read" defaultValue={product.rating.rate} precision={0.5} readOnly size='small' />
-                                                                <p className='productCount'>{product.rating.rate} ({product.rating.count})</p>
-                                                            </div>
-                                                            <p className='cartProductColor'>Color: {product.color}</p>
-                                                            <p className='cartProductSize'>Size: {product.size}</p>
-                                                        </div>
-                                                        <div className='cartQtyDetails'>
-                                                            <div>
-                                                                <div className='quantityHandle'>
-                                                                    <IconButton color='inherit' onClick={() => { product.count > 1 && dispatch(changeCartCount({ id: product.id, value: product.count - 1 })) }}>
-                                                                        <RemoveCircleIcon />
-                                                                    </IconButton>
-                                                                    <p className='cartQtyCount'>
-                                                                        Quantity:
-                                                                        <input className='qtyInput' type="text" value={product.count} onChange={(e) => { dispatch(changeCartCount({ id: product.id, value: +e.target.value })) }} />
-                                                                        {/* <Box sx={{display:'flex'}}>
-                                                                            <CheckCircleOutlineSharpIcon />
-                                                                        </Box> */}
-                                                                    </p>
-                                                                    <IconButton color='inherit' onClick={() => { dispatch(changeCartCount({ id: product.id, value: product.count + 1 })) }}>
-                                                                        <AddCircleIcon />
-                                                                    </IconButton>
-                                                                </div>
-                                                                <div>
-                                                                    <p className='cartTotalPrice'>Total Price: {product.totalPrice.toFixed(2)} </p>
-                                                                </div>
-                                                            </div>
-                                                            <div className='addCartButton cartRemoveButton' onClick={() => { dispatch(removeCart(product.id)) }}>
-                                                                <p>Remove Item</p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </Grid>
+                                            <CartCard product={product}/>
                                         )
                                     })}
                                 </Grid>

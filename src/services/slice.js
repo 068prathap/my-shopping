@@ -1,22 +1,26 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-    sorting: '',
+    shopSorting: '',
+    wishListSorting: '',
     selectedCategory: 'All',
     productsList: [],
     cartList: [],
     theme: 'light',
     previewParent: '',
-    wishList:[],
-    modalOpen:false,
+    wishList: [],
+    modalOpen: false,
 }
 
 export const counterSlice = createSlice({
     name: 'products',
     initialState,
     reducers: {
-        setSorting: (state, value) => {
-            state.sorting = value.payload
+        setShopSorting: (state, value) => {
+            state.shopSorting = value.payload
+        },
+        setWishListSorting: (state, value) => {
+            state.wishListSorting = value.payload
         },
         setSelectedCategory: (state, value) => {
             state.selectedCategory = value.payload
@@ -50,9 +54,16 @@ export const counterSlice = createSlice({
             const index = state.cartList.findIndex(obj => {
                 return obj.id === payload.id
             });
-            if(!/[^0-9]/.test(payload.value) && payload.value>0 && payload.value<=100)
-            {
-                state.cartList[index].count = payload.value;
+            if (!/[^0-9]/.test(payload.value)) {
+                if (payload.value < 1) {
+                    state.cartList[index].count = 1;
+                }
+                else if (payload.value > 100) {
+                    state.cartList[index].count = 100;
+                }
+                else {
+                    state.cartList[index].count = payload.value;
+                }
                 state.cartList[index].totalPrice = state.cartList[index].count * state.cartList[index].price
             }
         },
@@ -71,12 +82,12 @@ export const counterSlice = createSlice({
         sortWishList: (state, { payload }) => {
             state.wishList = payload
         },
-        setModalOpen:(state, {payload})=>{
-            state.modalOpen=payload
+        setModalOpen: (state, { payload }) => {
+            state.modalOpen = payload
         }
     },
 })
 
-export const { setSorting, setSelectedCategory, setProductsList, addCart, removeCart, sortCart, changeTheme, setPreviewParent, changeCartCount, addWishList, removeWishList, sortWishList, setModalOpen } = counterSlice.actions
+export const { setWishListSorting, setShopSorting, setSelectedCategory, setProductsList, addCart, removeCart, sortCart, changeTheme, setPreviewParent, changeCartCount, addWishList, removeWishList, sortWishList, setModalOpen } = counterSlice.actions
 
 export default counterSlice.reducer 

@@ -37,6 +37,8 @@ import ThemeButton from '../themeButton/themeButton';
 import Badge from '@mui/material/Badge';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import WishList from '../../pages/wishList/wishList';
+import Popover from '@mui/material/Popover';
+import Typography from '@mui/material/Typography';
 
 const drawerWidth = 240;
 
@@ -114,10 +116,20 @@ export default function MiniDrawer(props) {
     // const drawerIconColor = theme === 'light' ? 'black' : 'white'
     const drawerIcons = [<GroupWorkIcon sx={{ color: 'white' }} />, <TungstenIcon sx={{ color: 'white' }} />, <DiamondIcon sx={{ color: 'white' }} />, <ManIcon sx={{ color: 'white' }} />, <WomanIcon sx={{ color: 'white' }} />]
     const selectedCategory = useSelector(state => state.product.selectedCategory)
-    const [profileOpen, setProfileOpen] = useState(false)
+    const [profileOpen, setProfileOpen] = useState(null)
+    const profilePopOpen = Boolean(profileOpen);
+    const id = profilePopOpen ? 'simple-popover' : undefined;
     const history = useHistory()
     const previewParent = useSelector(state => state.product.previewParent)
     const cartList = useSelector(state => state.product.cartList)
+
+    const handleProfileClick = (event) => {
+        setProfileOpen(event.currentTarget);
+    };
+
+    const handleProfileClose = () => {
+        setProfileOpen(null);
+      };    
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -230,21 +242,25 @@ export default function MiniDrawer(props) {
                                         </div>
                                     </Link>
                                     <Link to='/wishList' className='Link'>
-                                        <Box className={`headerSideIcon ${props.page === 'wishList' ? 'activeTab' : ''}`} sx={{ display: 'flex' }} >
+                                        <Box className={`headerSideIcon ${props.page === 'wishList' || (props.page === 'preview' && previewParent === 'wishList') ? 'activeTab' : ''}`} sx={{ display: 'flex' }} >
                                             <FavoriteRoundedIcon />
                                         </Box>
                                     </Link>
-                                    <Box className='headerSideIcon profileTab' sx={{ display: 'flex' }}>
-                                        <AccountCircleRoundedIcon onClick={() => { setProfileOpen(state => !state) }} />
-                                        {
-                                            profileOpen ?
-                                                <Box sx={{ position: 'absolute', bgcolor: 'white', color: 'black', padding: '10px 30px', borderRadius: '20px', right: '0px', zIndex: 1 }}>
-                                                    <p>Hi, Prathap</p>
-                                                </Box>
-                                                :
-                                                null
-                                        }
+                                    <Box className='headerSideIcon profileTab' sx={{ display: 'flex' }} onClick={(e) => { handleProfileClick(e) }} >
+                                        <AccountCircleRoundedIcon />
                                     </Box>
+                                    <Popover
+                                        id={'profilePop'}
+                                        open={profilePopOpen}
+                                        anchorEl={profileOpen}
+                                        onClose={handleProfileClose}
+                                        anchorOrigin={{
+                                            vertical: 'bottom',
+                                            horizontal: 'left',
+                                        }}
+                                    >
+                                        <Typography sx={{ p: 2 }}>Hi, Prathap</Typography>
+                                    </Popover>
                                 </div>
                             </div>
                             {props.page === 'home' && <Home />}

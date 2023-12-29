@@ -9,13 +9,13 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 // import Loader from '../../components/loader/loader';
 // import { getSpecificProducts } from '../../services/thunkFunctions';
-import { setSorting, sortWishList } from '../../services/slice';
+import { setWishListSorting, sortWishList } from '../../services/slice';
 
 function WishList() {
     const wishList = useSelector(state => state.product.wishList);
     const dispatch = useDispatch()
     // const [isLoading, setIsLoading] = useState(false)
-    const [sorting, setSorting] = useState('')
+    const sorting = useSelector(state => state.product.wishListSorting)
     // const selectedCategory = useSelector(state => state.product.selectedCategory)
     const count = wishList.length;
     const theme = useSelector(state => state.product.theme)
@@ -47,8 +47,7 @@ function WishList() {
         }
         dispatch(sortWishList(list))
         // setIsLoading(false)
-        // dispatch(setSorting(sorting))
-        setSorting(sorting)
+        dispatch(setWishListSorting(sorting))
     }
 
     return (
@@ -62,27 +61,33 @@ function WishList() {
                                     <p className='productText'>Products</p>
                                 </div>
                                 <div className='shopTitleDiv'>
-                                    <h1 className='shopTitle'>Shop</h1>
+                                    <h1 className='shopTitle'>Wish List</h1>
                                 </div>
                             </div>
                             <div className='shopHeaderResult'>
-                                <p className='shopResult'>Showing 1-{count} of {count} results</p>
-                                <div>
-                                    <FormControl sx={{ m: 1, mr: 0, minWidth: 160, maxWidth: 160, border: '1px solid white', borderRadius: '5px', textAlign: 'center' }} size='small'>
-                                        <Select
-                                            value={sorting}
-                                            onChange={(e) => { sortList(e.target.value) }}
-                                            displayEmpty
-                                            inputProps={{ 'aria-label': 'Without label', sx: { color: 'white' } }}
-                                        >
-                                            <MenuItem value="">
-                                                <em>Default Sorting</em>
-                                            </MenuItem>
-                                            <MenuItem value={'Rating'}>Rating for the products  </MenuItem>
-                                            <MenuItem value={'Price'}>Price</MenuItem>
-                                        </Select>
-                                    </FormControl>
-                                </div>
+                                {count ?
+                                    <>
+                                        <p className='shopResult'>Showing 1-{count} of {count} results</p>
+                                        <div>
+                                            <FormControl sx={{ m: 1, mr: 0, minWidth: 160, maxWidth: 160, border: '1px solid white', borderRadius: '5px', textAlign: 'center' }} size='small'>
+                                                <Select
+                                                    value={sorting}
+                                                    onChange={(e) => { sortList(e.target.value) }}
+                                                    displayEmpty
+                                                    inputProps={{ 'aria-label': 'Without label', sx: { color: 'white' } }}
+                                                >
+                                                    <MenuItem value="">
+                                                        <em>Default Sorting</em>
+                                                    </MenuItem>
+                                                    <MenuItem value={'Rating'}>Rating for the products  </MenuItem>
+                                                    <MenuItem value={'Price'}>Price</MenuItem>
+                                                </Select>
+                                            </FormControl>
+                                        </div>
+                                    </>
+                                    :
+                                    <p className='shopResult'>Your wish list is empty</p>
+                                }
                             </div>
                         </div>
                     </div>

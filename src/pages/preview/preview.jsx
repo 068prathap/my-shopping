@@ -24,14 +24,14 @@ function Preview() {
     const [limit, setLimit] = useState(0)
     const selectedCategory = useSelector(state => state.product.selectedCategory)
     // const productList = useSelector(state => state.product.cartList)
-    const [productList, setProductList] = useState([])
+    const [productList, setProductList] = useState(useSelector(state=>state.product.wishList))
     const history = useHistory()
-    const sorting = useSelector(state => state.product.sorting)
+    const previewParent = useSelector(state => state.product.previewParent)
+    const sorting = useSelector(state => state.product[previewParent==='shop' ? 'shopSorting' : 'wishListSorting'])
     let tempImgRotate = '';
     const theme = useSelector(state => state.product.theme)
-    const previewParent = useSelector(state => state.product.previewParent)
-    const cartList=useSelector(state=>state.product.cartList)
-    const [selectedSize,setSelectedSize]=useState(37)
+    const cartList = useSelector(state => state.product.cartList)
+    const [selectedSize, setSelectedSize] = useState(37)
     const isCart = cartList.some(obj => {
         return obj.title === productDetails.title && obj.color === activeColor[0].toUpperCase() + activeColor.slice(1) && obj.size === selectedSize
     })
@@ -74,22 +74,22 @@ function Preview() {
             setIsLoading(false)
             setProductDetails(result.payload)
 
-            // if (previewParent === 'shop') {
-            if (selectedCategory === 'All') {
-                result = await dispatch(getAllProducts())
+            if (previewParent === 'shop') {
+                if (selectedCategory === 'All') {
+                    result = await dispatch(getAllProducts())
+                }
+                else {
+                    let newName = ''
+                    selectedCategory.split(' ').forEach(namePart => {
+                        newName += namePart[0].toLowerCase() + namePart.slice(1) + ' '
+                    })
+                    result = await dispatch(getSpecificProducts(newName))
+                }
+                result = result.payload;
             }
             else {
-                let newName = ''
-                selectedCategory.split(' ').forEach(namePart => {
-                    newName += namePart[0].toLowerCase() + namePart.slice(1) + ' '
-                })
-                result = await dispatch(getSpecificProducts(newName))
+                result = productList
             }
-            result = result.payload;
-            // }
-            // else {
-            //     result = productList
-            // }
             sortList([...result])
         })()
     }, [params])
@@ -129,7 +129,7 @@ function Preview() {
     }
 
     function handleAddCart() {
-        const newProduct = { ...productDetails, color:activeColor[0].toUpperCase() + activeColor.slice(1), size:selectedSize, id:cartList.length+1 };
+        const newProduct = { ...productDetails, color: activeColor[0].toUpperCase() + activeColor.slice(1), size: selectedSize, id: cartList.length + 1 };
         dispatch(addCart(newProduct))
     }
 
@@ -177,7 +177,7 @@ function Preview() {
                                 </div>
                                 :
                                 <div className='productDetails'>
-                                    <Grid container spacing={3} sx={{ p: 0, mt:{xs:'0px'} }} className='productDetailsGrid'>
+                                    <Grid container spacing={3} sx={{ p: 0, mt: { xs: '0px' } }} className='productDetailsGrid'>
                                         <Grid item xs={4} md={6} lg={4} className=''>
                                             <h1 className='productName'>{productDetails.title}</h1>
                                             <p className='productDis'>{productDetails.description}</p>
@@ -231,14 +231,14 @@ function Preview() {
                                                     <p className='sizeTitle'>Size: </p>
                                                     <div>
                                                         <div className='sizeList1'>
-                                                            <Box className='size' sx={{bgcolor:`${selectedSize===37 && (theme==='light' ? 'black' : '#e9a4d2')}`, color:`${selectedSize===37 && 'white'}`}} onClick={()=>{setSelectedSize(37)}}>37</Box>
-                                                            <Box className='size' sx={{bgcolor:`${selectedSize===38 && (theme==='light' ? 'black' : '#e9a4d2')}`, color:`${selectedSize===38 && 'white'}`}} onClick={()=>{setSelectedSize(38)}}>38</Box>
-                                                            <Box className='size' sx={{bgcolor:`${selectedSize===39 && (theme==='light' ? 'black' : '#e9a4d2')}`, color:`${selectedSize===39 && 'white'}`}} onClick={()=>{setSelectedSize(39)}}>39</Box>
+                                                            <Box className='size' sx={{ bgcolor: `${selectedSize === 37 && (theme === 'light' ? 'black' : '#e9a4d2')}`, color: `${selectedSize === 37 && 'white'}` }} onClick={() => { setSelectedSize(37) }}>37</Box>
+                                                            <Box className='size' sx={{ bgcolor: `${selectedSize === 38 && (theme === 'light' ? 'black' : '#e9a4d2')}`, color: `${selectedSize === 38 && 'white'}` }} onClick={() => { setSelectedSize(38) }}>38</Box>
+                                                            <Box className='size' sx={{ bgcolor: `${selectedSize === 39 && (theme === 'light' ? 'black' : '#e9a4d2')}`, color: `${selectedSize === 39 && 'white'}` }} onClick={() => { setSelectedSize(39) }}>39</Box>
                                                         </div>
                                                         <div className='sizeList1'>
-                                                            <Box className='size' sx={{bgcolor:`${selectedSize===40 && (theme==='light' ? 'black' : '#e9a4d2')}`, color:`${selectedSize===40 && 'white'}`}} onClick={()=>{setSelectedSize(40)}}>40</Box>
-                                                            <Box className='size' sx={{bgcolor:`${selectedSize===41 && (theme==='light' ? 'black' : '#e9a4d2')}`, color:`${selectedSize===41 && 'white'}`}} onClick={()=>{setSelectedSize(41)}}>41</Box>
-                                                            <Box className='size' sx={{bgcolor:`${selectedSize===42 && (theme==='light' ? 'black' : '#e9a4d2')}`, color:`${selectedSize===42 && 'white'}`}} onClick={()=>{setSelectedSize(42)}}>42</Box>
+                                                            <Box className='size' sx={{ bgcolor: `${selectedSize === 40 && (theme === 'light' ? 'black' : '#e9a4d2')}`, color: `${selectedSize === 40 && 'white'}` }} onClick={() => { setSelectedSize(40) }}>40</Box>
+                                                            <Box className='size' sx={{ bgcolor: `${selectedSize === 41 && (theme === 'light' ? 'black' : '#e9a4d2')}`, color: `${selectedSize === 41 && 'white'}` }} onClick={() => { setSelectedSize(41) }}>41</Box>
+                                                            <Box className='size' sx={{ bgcolor: `${selectedSize === 42 && (theme === 'light' ? 'black' : '#e9a4d2')}`, color: `${selectedSize === 42 && 'white'}` }} onClick={() => { setSelectedSize(42) }}>42</Box>
                                                         </div>
                                                     </div>
                                                 </div>

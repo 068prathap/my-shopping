@@ -40,7 +40,7 @@ function ProductCard({ product, pageType }) {
                     avatar={
                         <IconButton>
                             <Link to={`/preview/${product.id}`}>
-                                <div className='headerIcon' onClick={() => { dispatch(setPreviewParent(pageType === 'shop' ? 'shop' : 'cart')) }}>
+                                <div className='headerIcon' onClick={() => { dispatch(setPreviewParent(pageType === 'shop' ? 'shop' : 'wishList')) }}>
                                     <ZoomOutMapIcon />
                                 </div>
                             </Link>
@@ -74,7 +74,7 @@ function ProductCard({ product, pageType }) {
                         alt="Paella dish"
                         sx={{ objectFit: 'contain', zIndex: 1, position: 'absolute', cursor: 'pointer' }}
                         className='shopcardImage'
-                        onClick={() => { history.push(`/preview/${product.id}`) }}
+                        onClick={() => { dispatch(setPreviewParent(pageType === 'shop' ? 'shop' : 'wishList')); history.push(`/preview/${product.id}`) }}
                     />
                 </div>
                 <Box sx={{ height: '150px' }}></Box>
