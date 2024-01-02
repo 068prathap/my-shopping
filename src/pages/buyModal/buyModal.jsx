@@ -43,26 +43,26 @@ const validationSchema1 = yup.object({
         .string('Enter your Name')
         .required('Name is required'),
     mobileNumber: yup
-        .string('Enter your Name')
-        .required('Name is required'),
+        .string('Enter your Mobile Number')
+        .required('Mobile Number is required'),
     email: yup
-        .string('Enter your Name')
-        .required('Name is required'),
+        .string('Enter your Email')
+        .required('Email is required'),
     country: yup
-        .string('Enter your Name')
-        .required('Name is required'),
+        .string('Enter your Country')
+        .required('Country is required'),
     state: yup
-        .string('Enter your Name')
-        .required('Name is required'),
+        .string('Enter your State')
+        .required('State is required'),
     city: yup
-        .string('Enter your Name')
-        .required('Name is required'),
+        .string('Enter your City')
+        .required('City is required'),
     zip: yup
-        .string('Enter your Name')
-        .required('Name is required'),
+        .string('Enter your Zip Code')
+        .required('Zip Code is required'),
     address: yup
-        .string('Enter your Name')
-        .required('Name is required'),
+        .string('Enter your Address')
+        .required('Address is required'),
 });
 
 const validationSchema2 = yup.object({
@@ -75,8 +75,6 @@ export default function BuyModal() {
     const open = useSelector(state => state.product.modalOpen)
     // const [open, setOpen]=React.useState(true)
     const dispatch = useDispatch()
-    //   const handleOpen = () => setOpen(true);
-    //   const handleClose = () => setOpen(false);
     const sateCodeList = []
     const [buyStep, setBuyStep] = React.useState(1)
     const [dateList, setDateList] = React.useState([])
@@ -95,9 +93,9 @@ export default function BuyModal() {
             note: '',
             paymentMethod: '',
         },
-        validationSchema: buyStep === 1 ? validationSchema1 : buyStep === 3 ? validationSchema2 : null,
+        validationSchema: buyStep === 1 ? validationSchema1 : buyStep === 3 && validationSchema2,
         onSubmit: (values) => {
-            // alert(JSON.stringify(values, null, 2));
+            console.log(values);
             setBuyStep(state => state + 1)
         },
     });
@@ -123,6 +121,10 @@ export default function BuyModal() {
         }
     }
 
+    function removeAllValues(){
+
+    }
+
     return (
         <div>
             <Modal
@@ -140,7 +142,7 @@ export default function BuyModal() {
             >
                 <Fade in={open}>
                     <Box sx={style}>
-                        <Box sx={{ textAlign: 'right' }} onClick={() => { dispatch(setModalOpen(false)); setBuyStep(1) }}>
+                        <Box sx={{ textAlign: 'right' }} onClick={() => { dispatch(setModalOpen(false)); setBuyStep(1); formik.resetForm() }}>
                             <Button sx={{ fontWeight: 'bold' }}>{buyStep !== 4 ? 'Cancel' : 'Close'}</Button>
                         </Box>
                         <form onSubmit={formik.handleSubmit}>
@@ -304,6 +306,7 @@ export default function BuyModal() {
                                                 <FormControlLabel value="Cash on Delivery" control={<Radio />} label="Cash on Delivery" />
                                                 <FormControlLabel value="POS on Delivery" control={<Radio />} label="POS on Delivery" />
                                             </RadioGroup>
+                                            <Box sx={{textAlign:'center', color:'#d32f2f', fontSize:'12px'}}>{formik.touched.paymentMethod && formik.errors.paymentMethod}</Box>
                                         </FormControl>
                                     </Box>
                                 </>
@@ -325,8 +328,8 @@ export default function BuyModal() {
                                 {buyStep !== 3 && buyStep !== 4 &&
                                     <Button sx={{ fontWeight: 'bold' }} type='submit' onClick={() => { }}>Next <ArrowForwardIcon /></Button>
                                 }
-                                {buyStep === 3 && buyStep !== 4 &&
-                                    <Button variant='contained' type='submit' sx={{ fontWeight: 'bold' }} onClick={() => { setBuyStep(state => state + 1) }}>Confirm Order</Button>
+                                {buyStep === 3 &&
+                                    <Button variant='contained' type='submit' sx={{ fontWeight: 'bold' }} onClick={() => {  }}>Confirm Order</Button>
                                 }
                             </Box>
                         </form>

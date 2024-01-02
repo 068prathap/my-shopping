@@ -3,7 +3,7 @@ import { Grid } from '@mui/material'
 import Rating from '@mui/material/Rating';
 import { IconButton } from '@mui/material';
 import { useDispatch } from 'react-redux';
-import { setSorting, sortCart, removeCart, changeCartCount, setModalOpen } from '../../services/slice';
+import { removeCart, changeCartCount } from '../../services/slice';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import { Box } from '@mui/material';
 import CheckCircleOutlineSharpIcon from '@mui/icons-material/CheckCircleOutlineSharp';
@@ -16,11 +16,9 @@ function CartCard({ product }) {
     const countInputRef = useRef()
     const [countValue, setCountValue] = useState(product.count)
 
-    useEffect(()=>{
-        // console.log(product.count);
+    useEffect(() => {
         setCountValue(product.count)
-    },[product.count])
-    // console.log('outer',product.count);
+    }, [product.count])
 
     return (
         <>
@@ -45,7 +43,7 @@ function CartCard({ product }) {
                         <div className='cartQtyDetails'>
                             <div>
                                 <div className='quantityHandle'>
-                                    <IconButton color='inherit' onClick={() => { product.count > 1 && dispatch(changeCartCount({ id: product.id, value: product.count - 1 })) }}>
+                                    <IconButton color='inherit' onClick={() => { countValue < 1 ? setCountValue(1) : dispatch(changeCartCount({ id: product.id, value: product.count - 1 })); setInputChange(false) }}>
                                         <RemoveCircleIcon />
                                     </IconButton>
                                     <p className='cartQtyCount'>
@@ -57,7 +55,7 @@ function CartCard({ product }) {
                                             </Box>
                                         }
                                     </p>
-                                    <IconButton color='inherit' onClick={() => { dispatch(changeCartCount({ id: product.id, value: product.count + 1 })) }}>
+                                    <IconButton color='inherit' onClick={() => { countValue > 100 ? setCountValue(100) : dispatch(changeCartCount({ id: product.id, value: product.count + 1 })); setInputChange(false) }}>
                                         <AddCircleIcon />
                                     </IconButton>
                                 </div>

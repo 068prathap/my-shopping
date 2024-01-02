@@ -1,12 +1,9 @@
 import './cart.scss'
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
 import { useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
 import { useDispatch, useSelector } from 'react-redux';
 import Loader from '../../components/loader/loader';
-import { sortCart, removeCart, changeCartCount, setModalOpen } from '../../services/slice';
+import { setModalOpen } from '../../services/slice';
 import LocalMallIcon from '@mui/icons-material/LocalMall';
 import { Box } from '@mui/material';
 import BuyModal from '../buyModal/buyModal';
@@ -17,12 +14,9 @@ function Cart() {
     const cartList = useSelector(state => state.product.cartList)
     const dispatch = useDispatch()
     const [isLoading, setIsLoading] = useState(false)
-    // const sorting = useSelector(state => state.product.sorting)
-    // const selectedCategory = useSelector(state => state.product.selectedCategory)
     const count = cartList.length
     const [totalAmount, setTotalAmount] = useState(0)
     const theme = useSelector(state => state.product.theme)
-    // const [isOpenModal, setIsOpenModal]=useState(false)
     const history = useHistory()
 
     useEffect(() => {
@@ -31,20 +25,6 @@ function Cart() {
         }, 0)
         setTotalAmount(totalAmount.toFixed(2))
     }, [cartList])
-
-    // function sortList(sorting, list = [...cartList]) {
-    //     if (sorting === 'Rating') {
-    //         list.sort(function (a, b) { return a.rating.rate - b.rating.rate });
-    //     }
-    //     else if (sorting === 'Price') {
-    //         list.sort(function (a, b) { return a.price - b.price });
-    //     }
-    //     else {
-    //         list.sort(function (a, b) { return a.id - b.id });
-    //     }
-    //     dispatch(sortCart(list))
-    //     dispatch(setSorting(sorting))
-    // }
 
     useEffect(() => {
         return ()=>dispatch(setModalOpen(false))
