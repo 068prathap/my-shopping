@@ -1,9 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit'
+import { persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
 import product from './slice'
-import storage from 'redux-persist/lib/storage';
-import { persistReducer, persistStore } from 'redux-persist';
-import { thunk } from 'redux-thunk';
-import { Tuple } from '@reduxjs/toolkit';
+import storage from './storage';
 
 const persistConfig = {
     key: 'root',
@@ -13,12 +11,16 @@ const persistConfig = {
 
 const persistedReducer = persistReducer(persistConfig, product)
 
-export const store = configureStore({
-    reducer: {
-        product: persistedReducer,
-    },
-    devTools: process.env.NODE_ENV !== 'production',
-    middleware: () => new Tuple(thunk)
-})
-
-export const persistor = persistStore(store)
+export function makeStore() {
+    return configureStore({
+        reducer: {
+            product: persistedReducer,
+        },
+        devTools: process.env.NODE_ENV !== 'production',
+        middleware: (getDefaultMiddleware) => getDefaultMiddleware({
+            serializableCheck: {
+                ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+            },
+        }),
+    })
+}

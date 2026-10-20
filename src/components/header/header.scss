@@ -1,26 +1,26 @@
-@use '../../pages/home/home.scss';
+@use '../../styles/mixins' as *;
 
 .homePage{
     min-height: 100vh;
 }
 
 .homeBannerOuter {
-    @include home.d-jc;
+    @include d-jc;
 }
 
 .homeBanner {
-    width: home.$main-Width;
+    width: $main-Width;
     // padding-bottom: 50px;
     color: white;
 }
 
 .homeHeader {
-    @include home.d-jc-ai(space-between);
+    @include d-jc-ai(space-between);
     margin-top: 25px;
 }
 
 .homeHeaderLogo {
-    @include home.d-ai;
+    @include d-ai;
     width: 10%;
 }
 
@@ -38,12 +38,12 @@
 }
 
 .homeHeaderTabs {
-    @include home.d-jc(space-around);
+    @include d-jc(space-around);
     width: 40%;
 }
 
 .headerIcons {
-    @include home.d-jc-ai(space-around);
+    @include d-jc-ai(space-around);
     width: 15%;
     gap:5px
 }
@@ -79,4 +79,11 @@
 
 .profileTab{
     position: relative;
+}
+
+.iconButton {
+    display: flex;
+    background: none;
+    border: none;
+    color: inherit;
 }

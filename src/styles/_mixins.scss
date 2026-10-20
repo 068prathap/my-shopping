@@ -1,0 +1,17 @@
+$main-Width: 90%;
+
+@mixin d-jc($jc: center) {
+    display: flex;
+    justify-content: $jc;
+}
+
+@mixin d-ai($ai: center) {
+    display: flex;
+    align-items: $ai;
+}
+
+@mixin d-jc-ai($jc: center, $ai: center) {
+    display: flex;
+    justify-content: $jc;
+    align-items: $ai;
+}

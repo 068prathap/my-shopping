@@ -1,29 +1,9 @@
-// $bg: linear-gradient(90deg, rgba(121, 88, 149, 1) 0%, rgba(233, 164, 210, 1) 35%, rgba(175, 125, 179, 1) 100%);
-$bg: linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(223,223,223,1) 35%, rgba(73,73,73,1) 100%);
-
-// @import url(./theme.js);
-
-// $bg: black;
-$hoverBg: rgba(255, 255, 255, 0.1882352941);
-
-@mixin d-jc($jc: center) {
-    display: flex;
-    justify-content: $jc;
-}
-
-@mixin d-ai($ai: center) {
-    display: flex;
-    align-items: $ai;
-}
-
-@mixin d-jc-ai($jc: center, $ai: center) {
-    display: flex;
-    justify-content: $jc;
-    align-items: $ai;
-}
-
 * {
     box-sizing: border-box;
+}
+
+p {
+    margin: 0;
 }
 
 body {
@@ -81,7 +61,3 @@ body {
     color: Black;
 }
 
-.css-hfutr2-MuiSvgIcon-root-MuiSelect-icon
-{
-    color: white !important;
-}

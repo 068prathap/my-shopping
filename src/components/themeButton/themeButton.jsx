@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
@@ -57,6 +59,11 @@ export default function ThemeButton() {
     const currentTheme=useSelector(state=>state.product.theme)
 
     return (
-        <MaterialUISwitch sx={{ m: 1 }} defaultChecked={currentTheme==='light' ? false : true}  onClick={()=>{dispatch(changeTheme(currentTheme==='light' ? 'dark' : 'light'))}}/>
+        <MaterialUISwitch
+            sx={{ m: 1 }}
+            checked={currentTheme !== 'light'}
+            onChange={() => { dispatch(changeTheme(currentTheme === 'light' ? 'dark' : 'light')) }}
+            slotProps={{ input: { 'aria-label': 'Toggle dark theme' } }}
+        />
     );
 }
